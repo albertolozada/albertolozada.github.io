@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alberto Lozada Silva | Remote sensing for carbon projects</title>
+<meta name="description" content="Portfolio of Alberto Lozada Silva: remote sensing, GIS and reproducible spatial evidence for AFOLU carbon projects.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f6f2;
+    --surface: #ffffff;
+    --text: #1d2420;
+    --muted: #5b655f;
+    --line: #dfe2dc;
+    --accent: #2f6b4f;
+    --accent-soft: #e3efe8;
+    --badge-progress: #8a5a12;
+    --badge-progress-bg: #fbf0dc;
+    --badge-planned: #49566b;
+    --badge-planned-bg: #e8ecf3;
+    --shadow: 0 1px 2px rgba(20, 30, 25, .06), 0 4px 16px rgba(20, 30, 25, .05);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #121614;
+      --surface: #1a201d;
+      --text: #e7ece9;
+      --muted: #a2ada7;
+      --line: #2c3530;
+      --accent: #7cc4a0;
+      --accent-soft: #20342a;
+      --badge-progress: #f0c27a;
+      --badge-progress-bg: #3a2d16;
+      --badge-planned: #b9c4d6;
+      --badge-planned-bg: #262d39;
+      --shadow: none;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  html[lang="en"] .es, html[lang="es"] .en { display: none !important; }
+  a { color: var(--accent); }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+
+  header.top {
+    position: sticky; top: 0; z-index: 1000;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  .top .wrap { display: flex; align-items: center; justify-content: space-between; height: 56px; gap: 12px; }
+  .brand { font-weight: 700; text-decoration: none; color: var(--text); white-space: nowrap; }
+  nav.links { display: flex; gap: 20px; }
+  nav.links a { color: var(--muted); text-decoration: none; font-size: 15px; }
+  nav.links a:hover { color: var(--text); }
+  .lang { display: flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+  .lang button {
+    border: 0; background: transparent; color: var(--muted);
+    font: inherit; font-size: 13px; font-weight: 600; padding: 4px 10px; cursor: pointer;
+  }
+  .lang button[aria-pressed="true"] { background: var(--accent); color: var(--bg); }
+
+  .hero { padding: 72px 16px 48px; }
+  .eyebrow { color: var(--accent); font-weight: 600; font-size: 14px; letter-spacing: .04em; text-transform: uppercase; margin: 0 0 12px; }
+  h1, h2 { font-family: "Source Serif 4", Georgia, serif; line-height: 1.2; margin: 0; }
+  h1 { font-size: clamp(32px, 5vw, 48px); max-width: 18ch; }
+  .lead { font-size: 19px; color: var(--muted); max-width: 62ch; margin: 20px 0 28px; }
+  .cta { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn {
+    display: inline-block; padding: 10px 18px; border-radius: 8px; font-weight: 600;
+    text-decoration: none; border: 1px solid var(--accent);
+  }
+  .btn.primary { background: var(--accent); color: var(--bg); }
+  .btn.ghost { color: var(--accent); }
+
+  section { padding: 48px 0; }
+  h2 { font-size: 28px; margin-bottom: 8px; }
+  .sub { color: var(--muted); margin: 0 0 28px; max-width: 64ch; }
+
+  .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    padding: 20px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 8px;
+  }
+  .card h3 { margin: 0; font-size: 17px; }
+  .card p { margin: 0; color: var(--muted); font-size: 15px; }
+  .card .meta { margin-top: auto; padding-top: 8px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .icon {
+    width: 36px; height: 36px; border-radius: 8px; background: var(--accent-soft); color: var(--accent);
+    display: grid; place-items: center;
+  }
+  .badge { font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px; }
+  .badge.progress { color: var(--badge-progress); background: var(--badge-progress-bg); }
+  .badge.planned { color: var(--badge-planned); background: var(--badge-planned-bg); }
+  .tag { font-size: 12px; color: var(--muted); border: 1px solid var(--line); padding: 1px 8px; border-radius: 999px; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .92em; }
+
+  #map {
+    height: 440px; border-radius: 12px; border: 1px solid var(--line); box-shadow: var(--shadow);
+  }
+  .map-note { color: var(--muted); font-size: 14px; margin-top: 10px; }
+
+  .principles { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .principle { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; }
+  .principle strong { display: block; margin-bottom: 4px; }
+  .principle span { color: var(--muted); font-size: 15px; }
+
+  footer { border-top: 1px solid var(--line); padding: 28px 0 40px; color: var(--muted); font-size: 14px; }
+  footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+
+  @media (max-width: 640px) {
+    nav.links { display: none; }
+    .hero { padding: 48px 16px 32px; }
+    #map { height: 340px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#">Alberto Lozada Silva</a>
+    <nav class="links" aria-label="Sections">
+      <a href="#focus"><span class="en">Focus</span><span class="es">Enfoque</span></a>
+      <a href="#projects"><span class="en">Projects</span><span class="es">Proyectos</span></a>
+      <a href="#map-section"><span class="en">Map</span><span class="es">Mapa</span></a>
+      <a href="#principles"><span class="en">How I work</span><span class="es">Cómo trabajo</span></a>
+    </nav>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-set-lang="en" aria-pressed="true">EN</button>
+      <button type="button" data-set-lang="es" aria-pressed="false">ES</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap hero">
+    <p class="eyebrow">
+      <span class="en">Remote sensing · GIS · Carbon markets</span>
+      <span class="es">Teledetección · SIG · Mercados de carbono</span>
+    </p>
+    <h1>
+      <span class="en">Spatial evidence you can verify</span>
+      <span class="es">Evidencia espacial que se puede verificar</span>
+    </h1>
+    <p class="lead">
+      <span class="en">I'm a forestry engineer and carbon project auditor. I build open, reproducible geospatial analyses and tools to check the spatial claims behind AFOLU carbon projects: project areas, forest loss, reference regions and monitoring plots.</span>
+      <span class="es">Soy ingeniero forestal y auditor de proyectos de carbono. Desarrollo análisis y herramientas geoespaciales abiertas y reproducibles para verificar la información espacial de los proyectos de carbono AFOLU: áreas de proyecto, pérdida de bosque, regiones de referencia y parcelas de monitoreo.</span>
+    </p>
+    <div class="cta">
+      <a class="btn primary" href="#projects"><span class="en">See projects</span><span class="es">Ver proyectos</span></a>
+      <a class="btn ghost" href="https://github.com/albertolozada">GitHub</a>
+      <a class="btn ghost" href="https://www.linkedin.com/in/alberto-lozada-silva/">LinkedIn</a>
+    </div>
+  </div>
+
+  <section id="focus">
+    <div class="wrap">
+      <h2><span class="en">Focus areas</span><span class="es">Áreas de trabajo</span></h2>
+      <p class="sub">
+        <span class="en">Three lines of work that support each other.</span>
+        <span class="es">Tres líneas de trabajo que se complementan.</span>
+      </p>
+      <div class="grid">
+        <div class="card">
+          <div class="icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg>
+          </div>
+          <h3><span class="en">Audit-grade spatial checks</span><span class="es">Controles espaciales de auditoría</span></h3>
+          <p>
+            <span class="en">Declared vs. calculated areas, overlaps, eligibility and leakage belts, always in a stated metric CRS.</span>
+            <span class="es">Áreas declaradas frente a calculadas, solapamientos, elegibilidad y cinturones de fugas, siempre en un CRS métrico declarado.</span>
+          </p>
+        </div>
+        <div class="card">
+          <div class="icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>
+          </div>
+          <h3><span class="en">Forest monitoring from space</span><span class="es">Monitoreo forestal desde el espacio</span></h3>
+          <p>
+            <span class="en">Sentinel-2 and Landsat time series, land cover and deforestation hotspots with open data.</span>
+            <span class="es">Series temporales de Sentinel-2 y Landsat, cobertura del suelo y focos de deforestación con datos abiertos.</span>
+          </p>
+        </div>
+        <div class="card">
+          <div class="icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M8 7V4M16 7V4M8 12h.01M16 12h.01M9 16h6"/></svg>
+          </div>
+          <h3><span class="en">AI agents with real GIS tools</span><span class="es">Agentes de IA con herramientas SIG reales</span></h3>
+          <p>
+            <span class="en">MCP servers that let an AI assistant run real geoprocessing instead of guessing numbers.</span>
+            <span class="es">Servidores MCP que permiten a un asistente de IA ejecutar geoprocesos reales en lugar de inventar cifras.</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects">
+    <div class="wrap">
+      <h2><span class="en">Projects</span><span class="es">Proyectos</span></h2>
+      <p class="sub">
+        <span class="en">Each project has its own repository with the data sources, the method and a notebook you can run in your browser.</span>
+        <span class="es">Cada proyecto tiene su propio repositorio con las fuentes de datos, el método y un notebook que se puede ejecutar en el navegador.</span>
+      </p>
+      <div class="grid">
+        <div class="card">
+          <h3>carbon-geo-mcp</h3>
+          <p>
+            <span class="en">An MCP server with audit-oriented GIS tools: area by stratum, forest loss in the project area, overlaps and data completeness, with an explicit CRS check before every calculation.</span>
+            <span class="es">Servidor MCP con herramientas SIG orientadas a auditoría: área por estrato, pérdida de bosque en el área del proyecto, solapamientos y completitud de datos, con verificación explícita del CRS antes de cada cálculo.</span>
+          </p>
+          <div class="meta">
+            <span class="badge progress"><span class="en">In progress</span><span class="es">En curso</span></span>
+            <span class="tag">Python</span><span class="tag">MCP</span><span class="tag">GeoPandas</span>
+          </div>
+        </div>
+        <div class="card">
+          <h3>redd-deforestation-chaco</h3>
+          <p>
+            <span class="en">Do deforestation patches in the Paraguayan Chaco cluster? Global Moran's I and local Getis-Ord Gi* on open forest loss data.</span>
+            <span class="es">¿Se agrupa la deforestación en el Chaco paraguayo? Moran's I global y Getis-Ord Gi* local sobre datos abiertos de pérdida de bosque.</span>
+          </p>
+          <div class="meta">
+            <span class="badge progress"><span class="en">In progress</span><span class="es">En curso</span></span>
+            <span class="tag">PySAL</span><span class="tag">REDD+</span>
+          </div>
+        </div>
+        <div class="card">
+          <h3>ndvi-sentinel2-redd</h3>
+          <p>
+            <span class="en">Sentinel-2 NDVI and ESA WorldCover land cover for a public REDD+ project, checking image availability before any download.</span>
+            <span class="es">NDVI de Sentinel-2 y cobertura ESA WorldCover para un proyecto REDD+ público, comprobando la disponibilidad de imágenes antes de descargar.</span>
+          </p>
+          <div class="meta">
+            <span class="badge planned"><span class="en">Planned</span><span class="es">Previsto</span></span>
+            <span class="tag">Sentinel-2</span><span class="tag">STAC</span>
+          </div>
+        </div>
+        <div class="card">
+          <h3>qgis-audit-atlas</h3>
+          <p>
+            <span class="en">An automated QGIS atlas that produces one evidence map per stratum or monitoring plot.</span>
+            <span class="es">Atlas automático en QGIS que genera un mapa de evidencias por estrato o por parcela de monitoreo.</span>
+          </p>
+          <div class="meta">
+            <span class="badge planned"><span class="en">Planned</span><span class="es">Previsto</span></span>
+            <span class="tag">QGIS</span><span class="tag">PyQGIS</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="map-section">
+    <div class="wrap">
+      <h2><span class="en">Case study areas</span><span class="es">Áreas de estudio</span></h2>
+      <p class="sub">
+        <span class="en">Where the case studies are located. Click a marker for details; switch between satellite imagery and the street map in the top-right corner.</span>
+        <span class="es">Ubicación de los casos de estudio. Haz clic en un marcador para ver el detalle; cambia entre imagen satelital y mapa de calles en la esquina superior derecha.</span>
+      </p>
+      <div id="map" role="region" aria-label="Map of case study areas"></div>
+      <p class="map-note">
+        <span class="en">More areas will be added as each project is published.</span>
+        <span class="es">Se irán agregando áreas a medida que se publique cada proyecto.</span>
+      </p>
+    </div>
+  </section>
+
+  <section id="principles">
+    <div class="wrap">
+      <h2><span class="en">How I work</span><span class="es">Cómo trabajo</span></h2>
+      <p class="sub">
+        <span class="en">The same standards I apply as an auditor.</span>
+        <span class="es">Los mismos criterios que aplico como auditor.</span>
+      </p>
+      <div class="principles">
+        <div class="principle">
+          <strong><span class="en">The agent explores, the script confirms</span><span class="es">El agente explora, el script confirma</span></strong>
+          <span><span class="en">Every reported number comes from code anyone can rerun.</span><span class="es">Cada cifra publicada sale de código que cualquiera puede volver a ejecutar.</span></span>
+        </div>
+        <div class="principle">
+          <strong><span class="en">CRS first</span><span class="es">Primero el CRS</span></strong>
+          <span><span class="en">Areas and distances are computed in a metric or equal-area CRS, and every result says which one.</span><span class="es">Áreas y distancias se calculan en un CRS métrico o de igual área, y cada resultado indica cuál se usó.</span></span>
+        </div>
+        <div class="principle">
+          <strong><span class="en">Say what is missing</span><span class="es">Decir qué falta</span></strong>
+          <span><span class="en">Data completeness and limitations are part of the result.</span><span class="es">La completitud de los datos y las limitaciones forman parte del resultado.</span></span>
+        </div>
+        <div class="principle">
+          <strong><span class="en">Open data only</span><span class="es">Solo datos abiertos</span></strong>
+          <span><span class="en">Case studies use public datasets and public project documents.</span><span class="es">Los casos de estudio usan datos públicos y documentos de proyecto públicos.</span></span>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Alberto Lozada Silva</span>
+    <span><a href="https://github.com/albertolozada">GitHub</a> · <a href="https://www.linkedin.com/in/alberto-lozada-silva/">LinkedIn</a></span>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script>
+  (function () {
+    // Language: saved choice, else browser language, else English
+    var saved = null;
+    try { saved = localStorage.getItem("lang"); } catch (e) {}
+    var initial = saved || ((navigator.language || "").toLowerCase().indexOf("es") === 0 ? "es" : "en");
+    function setLang(lang) {
+      document.documentElement.lang = lang;
+      document.querySelectorAll("[data-set-lang]").forEach(function (b) {
+        b.setAttribute("aria-pressed", String(b.dataset.setLang === lang));
+      });
+      try { localStorage.setItem("lang", lang); } catch (e) {}
+    }
+    document.querySelectorAll("[data-set-lang]").forEach(function (b) {
+      b.addEventListener("click", function () { setLang(b.dataset.setLang); });
+    });
+    setLang(initial);
+
+    // Map
+    if (typeof L === "undefined") return;
+    var imagery = L.tileLayer(
+      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      { maxZoom: 18, attribution: "Imagery © Esri, Maxar, Earthstar Geographics" }
+    );
+    var streets = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19, attribution: "© OpenStreetMap contributors"
+    });
+    var map = L.map("map", { layers: [imagery], scrollWheelZoom: false }).setView([-20, -62], 4);
+    L.control.layers({ "Satellite": imagery, "OpenStreetMap": streets }).addTo(map);
+    L.control.scale({ imperial: false }).addTo(map);
+
+    var studies = [
+      {
+        name: "redd-deforestation-chaco",
+        latlng: [-21.5, -60.5],
+        en: "Paraguayan Chaco: clustering of deforestation (in progress)",
+        es: "Chaco paraguayo: agrupamiento de la deforestación (en curso)"
+      }
+    ];
+    studies.forEach(function (s) {
+      L.circleMarker(s.latlng, { radius: 9, color: "#ffffff", weight: 2, fillColor: "#2f6b4f", fillOpacity: 1 })
+        .addTo(map)
+        .bindPopup("<strong>" + s.name + "</strong><br><span class='en'>" + s.en + "</span><span class='es'>" + s.es + "</span>");
+    });
+  })();
+</script>
+</body>
+</html>
