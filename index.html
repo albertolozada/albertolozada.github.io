@@ -230,14 +230,14 @@
           </div>
         </div>
         <div class="card">
-          <h3>redd-deforestation-chaco</h3>
+          <h3><a href="https://github.com/albertolozada/deforestation-hotspots-colombia">deforestation-hotspots-colombia</a></h3>
           <p>
-            <span class="en">Do deforestation patches in the Paraguayan Chaco cluster? Global Moran's I and local Getis-Ord Gi* on open forest loss data.</span>
-            <span class="es">¿Se agrupa la deforestación en el Chaco paraguayo? Moran's I global y Getis-Ord Gi* local sobre datos abiertos de pérdida de bosque.</span>
+            <span class="en">Where does deforestation cluster in the Colombian Amazon and Chocó? Moran's I and Getis-Ord Gi* run by an AI agent through gis-mcp, and a VT0007-style (VM0048) risk map test: adding past hot spots halves the allocation error.</span>
+            <span class="es">¿Dónde se agrupa la deforestación en la Amazonía colombiana y el Chocó? Moran's I y Getis-Ord Gi* ejecutados por un agente de IA con gis-mcp, y una prueba de mapa de riesgo al estilo VT0007 (VM0048): añadir los hotspots previos reduce a la mitad el error de asignación.</span>
           </p>
           <div class="meta">
-            <span class="badge progress"><span class="en">In progress</span><span class="es">En curso</span></span>
-            <span class="tag">PySAL</span><span class="tag">REDD+</span>
+            <span class="badge done"><span class="en">Available</span><span class="es">Disponible</span></span>
+            <span class="tag">PySAL</span><span class="tag">gis-mcp</span><span class="tag">VM0048</span>
           </div>
         </div>
         <div class="card">
@@ -345,16 +345,22 @@
     var streets = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 19, attribution: "© OpenStreetMap contributors"
     });
-    var map = L.map("map", { layers: [imagery], scrollWheelZoom: false }).setView([-20, -62], 4);
+    var map = L.map("map", { layers: [imagery], scrollWheelZoom: false }).setView([4, -74], 5);
     L.control.layers({ "Satellite": imagery, "OpenStreetMap": streets }).addTo(map);
     L.control.scale({ imperial: false }).addTo(map);
 
     var studies = [
       {
-        name: "redd-deforestation-chaco",
-        latlng: [-21.5, -60.5],
-        en: "Paraguayan Chaco: clustering of deforestation (in progress)",
-        es: "Chaco paraguayo: agrupamiento de la deforestación (en curso)"
+        name: "deforestation-hotspots-colombia",
+        latlng: [2.0, -73.6],
+        en: "Colombian Amazon deforestation arc: hot spots of tree cover loss 2001-2025",
+        es: "Arco de deforestación amazónico: hotspots de pérdida de cobertura arbórea 2001-2025"
+      },
+      {
+        name: "deforestation-hotspots-colombia",
+        latlng: [6.3, -76.9],
+        en: "Chocó: hot spots of tree cover loss 2001-2025",
+        es: "Chocó: hotspots de pérdida de cobertura arbórea 2001-2025"
       }
     ];
     studies.forEach(function (s) {
